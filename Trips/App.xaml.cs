@@ -2,6 +2,8 @@
 using Prism;
 using Prism.Ioc;
 using Prism.Unity;
+using Trips.Services;
+using Trips.Services.Interfaces;
 using Trips.ViewModels;
 using Trips.Views;
 using Xamarin.Forms;
@@ -31,6 +33,9 @@ namespace Trips
         {
             containerRegistry.RegisterForNavigation<NavigationPage>("NavigationView");
             containerRegistry.RegisterForNavigation<TripsView, TripsViewModel>();
+            containerRegistry.RegisterForNavigation<NewTripView, NewTripViewModel>();
+
+            containerRegistry.RegisterSingleton<ILocationService, LocationService>();
         }
 
         protected override async void OnInitialized()
