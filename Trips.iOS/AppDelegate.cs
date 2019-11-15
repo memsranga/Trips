@@ -25,8 +25,7 @@ namespace Trips.iOS
             global::Xamarin.Forms.Forms.Init();
             LoadApplication(new App(new PrismiOSInitializer()));
 
-            // TODO: Google Maps Api Key
-            Google.Maps.MapServices.ProvideApiKey("");
+            Google.Maps.MapServices.ProvideApiKey(Constants.GoogleMapsApiKey);
             return base.FinishedLaunching(app, options);
         }
     }

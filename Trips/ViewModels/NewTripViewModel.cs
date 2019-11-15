@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
+using System.Timers;
 using System.Windows.Input;
+using Acr.UserDialogs;
 using Prism.Commands;
 using Prism.Navigation;
 using Prism.Services;
@@ -15,15 +18,18 @@ namespace Trips.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ILocationService _locationService;
         private readonly IDeviceService _deviceService;
-        private readonly IPageDialogService _pageDialogService;
+        private readonly IUserDialogs _userDialogs;
         private CoordinateModel _currentLocation;
+        private DateTimeOffset _startTime;
+        private Timer _timer;
+        private double _currentSpeed;
 
-        public NewTripViewModel(INavigationService navigationService, ILocationService locationService, IDeviceService deviceService, IPageDialogService pageDialogService)
+        public NewTripViewModel(INavigationService navigationService, ILocationService locationService, IDeviceService deviceService, IUserDialogs userDialogs)
         {
             _navigationService = navigationService;
             _locationService = locationService;
             _deviceService = deviceService;
-            _pageDialogService = pageDialogService;
+            _userDialogs = userDialogs;
             LocationChangedCommand = new DelegateCommand<CoordinateModel>(LocationChangedCommandHandler);
             BackCommand = new DelegateCommand(BackCommandHandler);
             EndTripCommand = new DelegateCommand(EndTripCommandHandler);
@@ -31,7 +37,22 @@ namespace Trips.ViewModels
 
         private async void EndTripCommandHandler()
         {
-            var option = await _pageDialogService.DisplayActionSheetAsync("End Trip", "", "Delete", "Save");
+            EndTime = DateTimeOffset.UtcNow;
+            var titleResult = await _userDialogs.PromptAsync("Enter the Trip Name", "Trip Name", "Save", "Discard", "Name", inputType: InputType.Name);
+            var navParams = new NavigationParameters();
+            if (titleResult.Ok)
+            {
+                var newTrip = new TripModel
+                {
+                    Name = titleResult.Text,
+                    StartTime = StartTime,
+                    EndTime = EndTime,
+                    Route = Route.ToList()
+                };
+                navParams.Add("NewTripDetails", newTrip);
+            }
+
+            await _navigationService.GoBackAsync(navParams, useModalNavigation: true);
         }
 
         private async void BackCommandHandler()
@@ -44,6 +65,7 @@ namespace Trips.ViewModels
             _deviceService.BeginInvokeOnMainThread(() =>
             {
                 CurrentLocation = location;
+                CurrentSpeed = location.Speed;
             });
         }
 
@@ -55,7 +77,17 @@ namespace Trips.ViewModels
             {
                 if (parameters.GetNavigationMode() == NavigationMode.New)
                 {
+                    StartTime = DateTimeOffset.UtcNow;
                     await _locationService.StartListeningAsyc(LocationChangedCommand);
+                    _timer = new Timer(1000);
+                    _timer.Elapsed += (s, ea) =>
+                    {
+                        _deviceService.BeginInvokeOnMainThread(() =>
+                        {
+                            RaisePropertyChanged(nameof(Duration));
+                        });
+                    };
+                    _timer.Start();
                 }
             }
             catch (Exception ex)
@@ -71,12 +103,29 @@ namespace Trips.ViewModels
             try
             {
                 await _locationService.StopListeningAsyc();
+                _timer.Stop();
+                _timer.Dispose();
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
             }
         }
+
+        public DateTimeOffset StartTime
+        {
+            get => _startTime;
+            set => SetProperty(ref _startTime, value);
+        }
+
+        public double CurrentSpeed
+        {
+            get => _currentSpeed;
+            set => SetProperty(ref _currentSpeed, value);
+        }
+
+        public TimeSpan Duration => DateTimeOffset.UtcNow - StartTime;
+        public DateTimeOffset EndTime { get; set; }
 
         public CoordinateModel CurrentLocation
         {

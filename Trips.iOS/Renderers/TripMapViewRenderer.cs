@@ -19,7 +19,7 @@ namespace Trips.iOS.Renderers
         private Marker _currentLocationMarker;
         private MutablePath _routePath;
         private Polyline _routePolyline;
-        private static readonly UIKit.UIColor _pathColor = Color.FromHex("1A237E").ToUIColor();
+        private static readonly UIKit.UIColor _pathColor = Color.FromHex("#1A237E").ToUIColor();
 
         protected override void OnElementChanged(ElementChangedEventArgs<TripMapView> e)
         {

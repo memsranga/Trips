@@ -39,7 +39,8 @@ namespace Trips.Services
             _changedCommand?.Execute(new CoordinateModel
             {
                 Latitude = e?.Position?.Latitude ?? 0,
-                Longitude = e?.Position?.Longitude ?? 0
+                Longitude = e?.Position?.Longitude ?? 0,
+                Speed = e?.Position?.Speed ?? 0
             });
         }
     }

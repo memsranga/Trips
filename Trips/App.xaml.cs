@@ -1,4 +1,5 @@
 ﻿using System;
+using Acr.UserDialogs;
 using Prism;
 using Prism.Ioc;
 using Prism.Unity;
@@ -36,6 +37,7 @@ namespace Trips
             containerRegistry.RegisterForNavigation<NewTripView, NewTripViewModel>();
 
             containerRegistry.RegisterSingleton<ILocationService, LocationService>();
+            containerRegistry.RegisterInstance(UserDialogs.Instance);
         }
 
         protected override async void OnInitialized()
