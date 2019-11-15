@@ -35,6 +35,7 @@ namespace Trips
             containerRegistry.RegisterForNavigation<NavigationPage>("NavigationView");
             containerRegistry.RegisterForNavigation<TripsView, TripsViewModel>();
             containerRegistry.RegisterForNavigation<NewTripView, NewTripViewModel>();
+            containerRegistry.RegisterForNavigation<ViewTripView, ViewTripViewModel>();
 
             containerRegistry.RegisterSingleton<ILocationService, LocationService>();
             containerRegistry.RegisterInstance(UserDialogs.Instance);

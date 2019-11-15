@@ -69,6 +69,7 @@
     <Compile Include="Renderers\TripMapViewRenderer.cs" />
     <Compile Include="Renderers\PulsatingMarker.cs" />
     <Compile Include="Helpers\CurveApproxHelper.cs" />
+    <Compile Include="Renderers\TripsClusterMapViewRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -141,6 +142,9 @@
     <PackageReference Include="Acr.UserDialogs">
       <Version>7.0.35</Version>
     </PackageReference>
+    <PackageReference Include="Xamarin.Google.Maps.Utils">
+      <Version>1.0.0</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -156,5 +160,7 @@
   <ItemGroup>
     <BundleResource Include="Resources\delete.png" />
     <BundleResource Include="Resources\back.png" />
+    <BundleResource Include="Resources\list.png" />
+    <BundleResource Include="Resources\map.png" />
   </ItemGroup>
 </Project>

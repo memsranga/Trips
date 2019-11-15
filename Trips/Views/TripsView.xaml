@@ -2,8 +2,10 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:converters="clr-namespace:Trips.Converters"
+             xmlns:customcontrols="clr-namespace:Trips.CustomControls"
              x:Class="Trips.Views.TripsView"
              Title="Trips"
+             x:Name="this"
              NavigationPage.BackButtonTitle="">
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -14,75 +16,102 @@
         <ToolbarItem Text="New"
                      Command="{Binding NewTripCommand}" />
     </ContentPage.ToolbarItems>
-    <CollectionView ItemsSource="{Binding Trips}"
+    <Grid>
+        <CollectionView ItemsSource="{Binding Trips}"
                     BackgroundColor="#CFD8DC"
-                    SelectionChangedCommand="{Binding TripSelectedCommand}"
                     SelectionMode="Single">
-        <CollectionView.ItemsLayout>
-            <LinearItemsLayout Orientation="Vertical" />
-        </CollectionView.ItemsLayout>
-        <CollectionView.ItemTemplate>
-            <DataTemplate>
-                <Grid Padding="10">
-                    <Frame Padding="10"
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding BindingContext.TripSelectedCommand, Source={x:Reference this}}"
+                                                  CommandParameter="{Binding .}"/>
+                        </Grid.GestureRecognizers>
+                        <Frame Padding="10"
                            HasShadow="False"
                            BackgroundColor="White"
                            CornerRadius="5"
                            IsClippedToBounds="True">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="5*" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <WebView Source="{Binding StaticImageUrl}"
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="5*" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <WebView Source="{Binding StaticImageUrl}"
                                      HeightRequest="100"
                                      Margin="-10, -10, -10, 0"  />
-                            <Label Grid.Row="1">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="{Binding Name}"
+                                <Label Grid.Row="1">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding Name}"
                                               FontAttributes="Bold" />
-                                        <Span Text=" - " />
-                                        <Span Text="{Binding Duration, Converter={StaticResource DurationConverter}}" />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
-                            <Label Grid.Row="2"
+                                            <Span Text=" - " />
+                                            <Span Text="{Binding Duration, Converter={StaticResource DurationConverter}}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Label Grid.Row="2"
                                    TextColor="Gray"
                                    Text="{Binding StartTime, StringFormat='Started At - {0:hh:mm:ss, MMM dd, yyyy}'}" />
-                            <Label Grid.Row="3"
+                                <Label Grid.Row="3"
                                    TextColor="Gray"
                                    Text="{Binding EndTime, StringFormat='Ended At - {0:hh:mm:ss, MMM dd, yyyy}'}" />
-                            <Label Grid.Row="4"
+                                <Label Grid.Row="4"
                                    TextColor="Gray"
                                    Text="{Binding AverageSpeed, StringFormat='Average Speed - {0:0.00} m/s'}" />
-                        </Grid>
-                    </Frame>
-                </Grid>
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-        <CollectionView.EmptyView>
-            <Grid>
-                <Grid.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding NewTripCommand}" />
-                </Grid.GestureRecognizers>
-                <Label FontSize="Large"
+                            </Grid>
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <Grid>
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NewTripCommand}" />
+                    </Grid.GestureRecognizers>
+                    <Label FontSize="Large"
                        TextColor="Gray"
                        VerticalOptions="CenterAndExpand"
                        HorizontalTextAlignment="Center"
                        HorizontalOptions="CenterAndExpand">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <Span Text="No Trips yet!" />
-                            <Span Text="&#10;" />
-                            <Span Text="Click here to start a new Trip" />
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-            </Grid>
-        </CollectionView.EmptyView>
-    </CollectionView>
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="No Trips yet!" />
+                                <Span Text="&#10;" />
+                                <Span Text="Click here to start a new Trip" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </Grid>
+            </CollectionView.EmptyView>
+        </CollectionView>
+        <customcontrols:TripsClusterMapView  Trips="{Binding Trips}"
+                                             IsVisible="{Binding IsMapMode}"
+                                             MarkerSelectedCommand="{Binding MarkerSelectedCommand}" />
+        <ImageButton Source="map"
+                     HorizontalOptions="End"
+                     VerticalOptions="End"
+                     HeightRequest="50"
+                     WidthRequest="50"
+                     CornerRadius="25"
+                     BackgroundColor="Gray"
+                     Padding="10"
+                     Margin="15, 30"
+                     Command="{Binding ToggleViewModeCommand}">
+            <ImageButton.Triggers>
+                <DataTrigger TargetType="ImageButton"
+                             Binding="{Binding IsMapMode}"
+                             Value="True">
+                    <Setter Property="Source"
+                            Value="list" />
+                </DataTrigger>
+            </ImageButton.Triggers>
+            </ImageButton>
+    </Grid>
 </ContentPage>

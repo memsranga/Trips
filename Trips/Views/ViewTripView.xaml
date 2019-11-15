@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:Trips.Converters"
+             xmlns:custom="clr-namespace:Trips.CustomControls"
+             x:Class="Trips.Views.ViewTripView"
+             Title="New Trip">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:DurationConverter x:Key="DurationConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid>
+        <custom:TripMapView VerticalOptions="FillAndExpand"
+                            CurrentLocation="{Binding CurrentLocation}"
+                            Route="{Binding Route}"/>
+
+        <ImageButton Source="delete"
+                     HeightRequest="50"
+                     WidthRequest="50"
+                     CornerRadius="25"
+                     HorizontalOptions="End"
+                     VerticalOptions="Start"
+                     Padding="10"
+                     BackgroundColor="DarkGray"
+                     Margin="0, 50, 10, 0"
+                     Command="{Binding CloseCommand}" />
+        <Frame VerticalOptions="End">
+            <StackLayout>
+                <Label Text="Trip Details"
+                       FontSize="Large"
+                       FontAttributes="Bold" />
+                <Label TextColor="Gray"
+                       Text="{Binding Name}" />
+                <Label TextColor="Gray"
+                       Text="{Binding Duration, StringFormat='Duration - {0}', Converter={StaticResource DurationConverter}}" />
+                <Label TextColor="Gray"
+                       Text="{Binding StartTime, StringFormat='Started At - {0:MM-dd-yyyy hh:mm:ss}'}" />
+                <Label TextColor="Gray"
+                       Text="{Binding EndTime, StringFormat='Ended At - {0:MM-dd-yyyy hh:mm:ss}'}" />
+                <Label TextColor="Gray"
+                       Text="{Binding CurrentSpeed, StringFormat='Average Speed - {0} m/s'}" />
+            </StackLayout>
+        </Frame>
+    </Grid>
+</ContentPage>
