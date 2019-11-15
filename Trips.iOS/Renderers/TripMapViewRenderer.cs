@@ -34,8 +34,10 @@ namespace Trips.iOS.Renderers
             {
                 _control = new MapView
                 {
-                    MapStyle = MapStyle.FromJson(MapStyleJson, null)
+                    MapStyle = MapStyle.FromJson(MapStyleJson, null),
                 };
+
+                _control.MoveCamera(CameraUpdate.ZoomToZoom(13));
             }
 
             SetNativeControl(_control);
@@ -91,6 +93,8 @@ namespace Trips.iOS.Renderers
             };
 
             _routePolyline.Map = _control;
+
+            _control.CameraTargetBounds = new CoordinateBounds(_routePath);
         }
 
         private void UpdateCurrentLocation(TripMapView mapView)
@@ -100,22 +104,20 @@ namespace Trips.iOS.Renderers
                 return;
             }
 
-            if (_currentLocationMarker != null)
+            if (_currentLocationMarker == null)
             {
-                _currentLocationMarker.Map = null;
-                _currentLocationMarker.Dispose();
+                _currentLocationMarker = new Marker()
+                {
+                    Map = _control,
+                    Position = new CLLocationCoordinate2D(mapView.CurrentLocation.Latitude, mapView.CurrentLocation.Longitude),
+                    Title = "Current Location",
+                    Tappable = false,
+                    IconView = new PulsatingMarker(),
+                    GroundAnchor = new CoreGraphics.CGPoint(0.5, 0.5)
+                };
             }
 
-            _currentLocationMarker = new Marker()
-            {
-                Map = _control,
-                Position = new CLLocationCoordinate2D(mapView.CurrentLocation.Latitude, mapView.CurrentLocation.Longitude),
-                Title = "Current Location",
-                IconView = new CustomMarker(),
-                GroundAnchor = new CoreGraphics.CGPoint(0.5, 0.5)
-            };
-
-            // Set Camera?
+            _currentLocationMarker.Position = new CLLocationCoordinate2D(mapView.CurrentLocation.Latitude, mapView.CurrentLocation.Longitude);
         }
     }
 }

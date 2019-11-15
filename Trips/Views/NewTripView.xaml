@@ -3,8 +3,32 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:custom="clr-namespace:Trips.CustomControls"
              x:Class="Trips.Views.NewTripView"
-             Title="New Trip">
-    <custom:TripMapView VerticalOptions="FillAndExpand"
-                        CurrentLocation="{Binding CurrentLocation}"
-                        Route="{Binding Route}"/>
+             Title="New Trip"
+             NavigationPage.HasNavigationBar="False">
+    <Grid>
+        <custom:TripMapView VerticalOptions="FillAndExpand"
+                            CurrentLocation="{Binding CurrentLocation}"
+                            Route="{Binding Route}"/>
+        <ImageButton Source="back"
+                     HeightRequest="50"
+                     WidthRequest="50"
+                     CornerRadius="25"
+                     HorizontalOptions="Start"
+                     VerticalOptions="Start"
+                     Padding="10"
+                     BackgroundColor="DarkGray"
+                     Margin="10, 50, 0, 0"
+                     Command="{Binding BackCommand}" />
+
+        <ImageButton Source="delete"
+                     HeightRequest="50"
+                     WidthRequest="50"
+                     CornerRadius="25"
+                     HorizontalOptions="End"
+                     VerticalOptions="Start"
+                     Padding="10"
+                     BackgroundColor="DarkGray"
+                     Margin="0, 50, 10, 0"
+                     Command="{Binding EndTripCommand}" />
+    </Grid>
 </ContentPage>

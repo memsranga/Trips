@@ -15,15 +15,28 @@ namespace Trips.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ILocationService _locationService;
         private readonly IDeviceService _deviceService;
+        private readonly IPageDialogService _pageDialogService;
         private CoordinateModel _currentLocation;
 
-        public NewTripViewModel(INavigationService navigationService, ILocationService locationService, IDeviceService deviceService)
+        public NewTripViewModel(INavigationService navigationService, ILocationService locationService, IDeviceService deviceService, IPageDialogService pageDialogService)
         {
             _navigationService = navigationService;
             _locationService = locationService;
             _deviceService = deviceService;
-
+            _pageDialogService = pageDialogService;
             LocationChangedCommand = new DelegateCommand<CoordinateModel>(LocationChangedCommandHandler);
+            BackCommand = new DelegateCommand(BackCommandHandler);
+            EndTripCommand = new DelegateCommand(EndTripCommandHandler);
+        }
+
+        private async void EndTripCommandHandler()
+        {
+            var option = await _pageDialogService.DisplayActionSheetAsync("End Trip", "", "Delete", "Save");
+        }
+
+        private async void BackCommandHandler()
+        {
+            await _navigationService.GoBackAsync();
         }
 
         private void LocationChangedCommandHandler(CoordinateModel location)
@@ -74,5 +87,7 @@ namespace Trips.ViewModels
         public ObservableCollection<CoordinateModel> Route { get; } = new ObservableCollection<CoordinateModel>();
 
         public ICommand LocationChangedCommand { get; }
+        public ICommand BackCommand { get; }
+        public ICommand EndTripCommand { get; }
     }
 }
