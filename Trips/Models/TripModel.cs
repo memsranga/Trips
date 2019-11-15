@@ -47,6 +47,7 @@ namespace Trips.Models
                 _route = value;
                 RaisePropertyChanged(nameof(StaticImageUrl));
                 RaisePropertyChanged(nameof(AverageSpeed));
+                RaisePropertyChanged(nameof(ApproxCenter));
             }
         }
 
@@ -71,6 +72,18 @@ namespace Trips.Models
             get
             {
                 return Route.Average(x => x.Speed);
+            }
+        }
+
+        public CoordinateModel ApproxCenter
+        {
+            get
+            {
+                return new CoordinateModel
+                {
+                    Latitude = Route.Average(x => x.Latitude),
+                    Longitude = Route.Average(x => x.Longitude)
+                };
             }
         }
     }

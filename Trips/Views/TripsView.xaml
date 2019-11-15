@@ -43,9 +43,10 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <WebView Source="{Binding StaticImageUrl}"
-                                     HeightRequest="100"
-                                     Margin="-10, -10, -10, 0"  />
+                                <customcontrols:TripMapView Route="{Binding Route}"
+                                                            HeightRequest="100"
+                                                            CurrentLocation="{Binding ApproxCenter}"
+                                                            Margin="-10, -10, -10, 0"/>
                                 <Label Grid.Row="1">
                                     <Label.FormattedText>
                                         <FormattedString>
